@@ -51,7 +51,7 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
     public function test_get_question_metadata_normal() {
         $this->assertEqual('<questionmetadata>
                      <scoring><marks>3</marks></scoring>
-                     <plainmode>no</plainmode> 
+                     <plainmode>no</plainmode>
                  </questionmetadata>',
                 $this->engine->getQuestionMetadata('test', '1.0', ''));
     }
@@ -65,10 +65,29 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
         $start = microtime(true);
         $this->assertEqual('<questionmetadata>
                      <scoring><marks>3</marks></scoring>
-                     <plainmode>no</plainmode> 
+                     <plainmode>no</plainmode>
                  </questionmetadata>',
                 $this->engine->getQuestionMetadata('metadata.slow', '0.05', ''));
         $this->assertTrue(microtime(true) - $start > 0.05);
+    }
+
+    public function test_start() {
+        $startreturn = $this->engine->start('test', '1.0', '', array('randomseed'), array('0'), array());
+        $this->assertEqual('test-1.0', $startreturn->questionSession);
+    }
+
+    public function test_process() {
+        $processreturn = $this->engine->process('test-1.0', array('try'), array('3'));
+        $this->assertEqual('Try 3', $processreturn->progressInfo);
+    }
+
+    public function test_stop() {
+        // Just verify there are no errors.
+        $this->engine->stop('test-1.0');
+
+        // Now do it with an expected failure.
+        $this->expectException();
+        $this->engine->stop('stop.fail-1.0');
     }
 }
 
