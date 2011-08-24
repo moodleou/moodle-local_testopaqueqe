@@ -47,6 +47,8 @@ class local_testopaqueqe_engine {
                 throw new SoapFault('1', 'Test opaque engine failing on demand.');
 
             case 'slow':
+                // Make sure PHP does not time-out while we sleep.
+                set_time_limit($delay + 10);
                 usleep($delay * 1000000);
 
             default:
