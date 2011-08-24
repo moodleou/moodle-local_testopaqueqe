@@ -26,13 +26,13 @@
 
 define('ABORT_AFTER_CONFIG', true);
 require_once('../../config.php');
-require_once(dirname(__FILE__) . '/engine.php');
+require_once($CFG->dirroot . '/local/testopaqueqe/engine.php');
 
 $server = new SoapServer(dirname(__FILE__) . '/opaque.wsdl', array(
-    'actor'      => $CFG->wwwroot . '/local/testopaqueqe/service.php',
+    'actor'        => $CFG->wwwroot . '/local/testopaqueqe/service.php',
     'soap_version' => SOAP_1_1,
-    'cache_wsdl' => WSDL_CACHE_NONE,
-    'classmap' => array(
+    'cache_wsdl'   => WSDL_CACHE_NONE,
+    'classmap'     => array(
         'Resource'      => 'local_testopaqueqe_resource',
         'StartReturn'   => 'local_testopaqueqe_start_return',
         'CustomResult'  => 'local_testopaqueqe_custom_result',

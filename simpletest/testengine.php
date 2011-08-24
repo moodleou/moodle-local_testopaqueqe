@@ -81,6 +81,13 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
         $this->assertEqual('Try 3', $processreturn->progressInfo);
     }
 
+    public function test_process_finish_right() {
+        $processreturn = $this->engine->process('test-1.0', array('try', 'finish', 'mark'), array('2', 'Finish', '3.00'));
+        $this->assertEqual(1, count($processreturn->results->scores));
+        $this->assertEqual(3, $processreturn->results->scores[0]->marks);
+        $this->assertEqual('', $processreturn->results->scores[0]->axis);
+    }
+
     public function test_stop() {
         // Just verify there are no errors.
         $this->engine->stop('test-1.0');
