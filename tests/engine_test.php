@@ -17,8 +17,7 @@
 /**
  * Unit tests for the test Opaque engine.
  *
- * @package    local
- * @subpackage testopaqueqe
+ * @package    local_testopaqueqe
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/local/testopaqueqe/engine.php');
 
 
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/local/testopaqueqe/engine.php');
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class test_local_testopaqueqe_engine extends UnitTestCase {
+class test_local_testopaqueqe_engine extends basic_testcase {
     protected $engine;
 
     public function setUp() {
@@ -49,7 +49,7 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
     }
 
     public function test_get_question_metadata_normal() {
-        $this->assertEqual('<questionmetadata>
+        $this->assertEquals('<questionmetadata>
                      <scoring><marks>3</marks></scoring>
                      <plainmode>no</plainmode>
                  </questionmetadata>',
@@ -57,13 +57,13 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
     }
 
     public function test_get_question_metadata_fail() {
-        $this->expectException();
+        $this->setExpectedException('SoapFault');
         $this->engine->getQuestionMetadata('metadata.fail', '1.0', '');
     }
 
     public function test_get_question_metadata_slow() {
         $start = microtime(true);
-        $this->assertEqual('<questionmetadata>
+        $this->assertEquals('<questionmetadata>
                      <scoring><marks>3</marks></scoring>
                      <plainmode>no</plainmode>
                  </questionmetadata>',
@@ -73,19 +73,19 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
 
     public function test_start() {
         $startreturn = $this->engine->start('test', '1.0', '', array('randomseed'), array('0'), array());
-        $this->assertEqual('test-1.0', $startreturn->questionSession);
+        $this->assertEquals('test-1.0', $startreturn->questionSession);
     }
 
     public function test_process() {
         $processreturn = $this->engine->process('test-1.0', array('try'), array('3'));
-        $this->assertEqual('Try 3', $processreturn->progressInfo);
+        $this->assertEquals('Try 3', $processreturn->progressInfo);
     }
 
     public function test_process_finish_right() {
         $processreturn = $this->engine->process('test-1.0', array('try', 'finish', 'mark'), array('2', 'Finish', '3.00'));
-        $this->assertEqual(1, count($processreturn->results->scores));
-        $this->assertEqual(3, $processreturn->results->scores[0]->marks);
-        $this->assertEqual('', $processreturn->results->scores[0]->axis);
+        $this->assertEquals(1, count($processreturn->results->scores));
+        $this->assertEquals(3, $processreturn->results->scores[0]->marks);
+        $this->assertEquals('', $processreturn->results->scores[0]->axis);
     }
 
     public function test_stop() {
@@ -93,18 +93,7 @@ class test_local_testopaqueqe_engine extends UnitTestCase {
         $this->engine->stop('test-1.0');
 
         // Now do it with an expected failure.
-        $this->expectException();
+        $this->setExpectedException('SoapFault');
         $this->engine->stop('stop.fail-1.0');
-    }
-}
-
-
-class test_local_testopaqueqe_resource extends UnitTestCase {
-    public function test_make_from_file() {
-        global $CFG;
-        $resource = local_testopaqueqe_resource::make_from_file(
-                $CFG->dirroot . '/local/testopaqueqe/pix/world.gif', 'world.gif', 'image/gif');
-        $this->assertEqual('world.gif', $resource->filename);
-        $this->assertEqual('image/gif', $resource->mimeType);
     }
 }
