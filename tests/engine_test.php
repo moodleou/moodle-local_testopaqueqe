@@ -68,7 +68,8 @@ class test_local_testopaqueqe_engine extends basic_testcase {
                      <plainmode>no</plainmode>
                  </questionmetadata>',
                 $this->engine->getQuestionMetadata('metadata.slow', '0.05', ''));
-        $this->assertTrue(microtime(true) - $start > 0.05);
+        $this->assertGreaterThan(0.04, microtime(true) - $start);
+        set_time_limit(0);
     }
 
     public function test_start() {
